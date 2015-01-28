@@ -1,0 +1,22 @@
+<header id="top" class="navbar navbar-inverse navbar-static-top">
+	<div class="container">
+		<div class="navbar-header">
+			<button data-target=".bs-navbar-collapse" data-toggle="collapse" type="button" class="navbar-toggle collapsed">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#">Home</a>
+		</div>
+		<nav class="collapse navbar-collapse bs-navbar-collapse">
+			<ul class="nav navbar-nav">
+				<%
+					for(i = 0; i < headerObj.length; i++) {
+						%><li><a href="#"><%= headerObj[i].name %></a></li><%
+					}
+				%>				
+			</ul>
+		</nav>
+	</div>
+</header>
