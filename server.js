@@ -43,8 +43,9 @@ io.on('connection', function (socket) {
   
 });
  
-client.on('message', function(topic, payload){
-    io.sockets.emit('mqtt', {'topic': String(topic),'payload':String(payload) });   
+client.on('message', function(topic, payload, packet){
+	console.log(JSON.parse(payload));
+    io.sockets.emit('mqtt', {'topic': String(topic), 'payload':JSON.parse(payload)});   
 });
 
 
