@@ -21,7 +21,7 @@ expressServer.set('view engine', 'ejs');
 expressServer.use('/node_modules', express.static(path.join(__dirname, '/node_modules')));
 
 
-var data = {headerObj : [{name : "Wohnzimmer"}, {name: "Esszimmer"}], buttons : [{name:"Licht 1",topic:'light/licht1'},{name:"Licht 2",topic:"light/licht2"},{name:"ZettelZ",topic:"light/zettelz"}]};
+var data = {headerObj : [{name : "Wohnzimmer"}, {name: "Esszimmer"}], buttons : [{name:"Licht 1",topic:'light/licht1',type:"1"},{name:"Licht 2",topic:"light/licht2",type:"1"},{name:"ZettelZ",topic:"light/zettelz",type:"1"}]};
 
 //index routing
 expressServer.get('/', function(req, res) {
@@ -38,7 +38,8 @@ io.on('connection', function (socket) {
   });
 
 	socket.on('publish', function(data) {
-		client.publish(data.topic, data.payload);
+		console.log(data.topic);
+		client.publish(data.topic, JSON.stringify(data.payload),{retain:true});
 	});
   
 });

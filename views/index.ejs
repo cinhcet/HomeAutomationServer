@@ -2,15 +2,18 @@
 <html>
 <head>
 	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<title>HomeAutomation</title>
 	<script type="text/javascript" src="node_modules/socket.io/node_modules/socket.io-client/socket.io.js"></script>
 	<link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+	<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		function getCSSTopic(obj) {
 			return obj.topic.replace("/","-");
 		}
-	
-		var socket = io.connect('http://localhost:8300');
+		
+		var socket = io.connect('http://192.168.0.15:8300');
 		socket.on('connect', function() {
 			
 			$('.navbar-brand').css('color','green');
@@ -21,9 +24,11 @@
 					if(msg.payload.value == "255") {
 						$('.'+getCSSTopic(msg)).removeClass('btn-primary');
 						$('.'+getCSSTopic(msg)).addClass('btn-success');
+						$('.'+getCSSTopic(msg)).attr('data-state','255');
 					} else {
 						$('.'+getCSSTopic(msg)).removeClass('btn-success');
 						$('.'+getCSSTopic(msg)).addClass('btn-primary');
+						$('.'+getCSSTopic(msg)).attr('data-state','0');
 					
 					}
 				}				
@@ -41,28 +46,42 @@
 			%>
 			
 		});
+		
+		$(document).ready(function() {
+			$('.btn').click(function() {
+				var ob = $(this);
+				var top = ob.attr('data-topic').replace('-','/');
+				var typ = ob.attr('data-type');
+				if(ob.attr('data-state') == '0') {
+					socket.emit('publish',{topic:top,payload:{type:typ,value:'255'}});
+				} else {
+					socket.emit('publish',{topic:top,payload:{type:typ,value:'0'}});
+				}
+			});
+		});
 	
 	</script>
 </head>
 <body>
 	<%include templates/header %>
 	<div class="content">
-		<div class="row">
-			<%	
-				var buttonsIterator = {};
-				for(i = 0; i < buttons.length; i++) {
-					buttonsIterator.name = buttons[i].name;
-					buttonsIterator.topic = buttons[i].topic;
-					%><%include templates/buttons %><% 
-				}
-			%>
-		</div>
-		<div class="row">
-			<div id="connected">not Connected</div>
+		<div class="container">
+			<div class="row">
+				<%	
+					var buttonsIterator = {};
+					for(i = 0; i < buttons.length; i++) {
+						buttonsIterator.name = buttons[i].name;
+						buttonsIterator.topic = buttons[i].topic;
+						buttonsIterator.type = buttons[i].type;
+						%><%include templates/buttons %><% 
+					}
+				%>
+			</div>
+			<div class="row">
+				<div id="connected">not Connected</div>
+			</div>
 		</div>
 	</div>
-	
-	<script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
-	<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
 </body>
 </html>
