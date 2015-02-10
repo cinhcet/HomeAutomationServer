@@ -8,12 +8,17 @@
 	<link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
 	<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+	<style>
+		.col-md-3 {
+			margin-bottom : 16px;
+		}
+	</style>
 	<script type="text/javascript">
 		function getCSSTopic(obj) {
 			return obj.topic.replace("/","-");
 		}
 		
-		var socket = io.connect('http://192.168.0.15:8300');
+		var socket = io.connect(location.hostname + ':8300');
 		socket.on('connect', function() {
 			
 			$('.navbar-brand').css('color','green');
@@ -40,15 +45,17 @@
 			});
 			
 			<%
-				for(i = 0; i < buttons.length; i++) {
-					%>socket.emit('subscribe',{topic:'<%= buttons[i].topic %>'});<%
+				for(j = 0; j < headerObj.length; j++) {
+					for(i = 0; i < headerObj[j].buttons.length; i++) {
+						%>socket.emit('subscribe',{topic:'<%= headerObj[j].buttons[i].topic %>'});<%
+					}
 				}
 			%>
 			
 		});
 		
 		$(document).ready(function() {
-			$('.btn').click(function() {
+			$('.btn.btnToggle').click(function() {
 				var ob = $(this);
 				var top = ob.attr('data-topic').replace('-','/');
 				var typ = ob.attr('data-type');
@@ -58,6 +65,17 @@
 					socket.emit('publish',{topic:top,payload:{type:typ,value:'0'}});
 				}
 			});
+			$('.category').collapse({toggle:false});
+			$('.headerObj').click(function() {
+				var btnObj = $(this);
+				var catObjThis = $('#'+btnObj.attr('data-id'));
+				for(i = 0; i < $('.category').length; i++) {
+					if('category'+i != catObjThis.attr('id')) {
+						$('#category'+i).collapse('hide');
+					}
+				}
+				catObjThis.collapse('show');
+			});
 		});
 	
 	</script>
@@ -65,19 +83,22 @@
 <body>
 	<%include templates/header %>
 	<div class="content">
-		<div class="container">
-			<div class="row">
-				<%	
-					var buttonsIterator = {};
-					for(i = 0; i < buttons.length; i++) {
-						buttonsIterator.name = buttons[i].name;
-						buttonsIterator.topic = buttons[i].topic;
-						buttonsIterator.type = buttons[i].type;
-						%><%include templates/buttons %><% 
-					}
-				%>
-			</div>
-		</div>
+		<%
+			for(j = 0; j < headerObj.length; j++) {
+				%><div class="container collapse category" id="category<%=j%>">
+					<div class="row">
+						<%	
+							var buttonsIterator = {};
+							for(i = 0; i < headerObj[j].buttons.length; i++) {
+								buttonsIterator.name = headerObj[j].buttons[i].name;
+								buttonsIterator.topic = headerObj[j].buttons[i].topic;
+								buttonsIterator.type = headerObj[j].buttons[i].type;
+								%><%include templates/buttons %><% 
+							}
+						%>
+					</div>
+				</div><%
+		}%>
 	</div>
 
 </body>
