@@ -65,6 +65,7 @@
 					socket.emit('publish',{topic:top,payload:{type:typ,value:'0'}});
 				}
 			});
+			
 			$('.category').collapse({toggle:false});
 			$('.headerObj').click(function() {
 				var btnObj = $(this);
@@ -75,6 +76,15 @@
 					}
 				}
 				catObjThis.collapse('show');
+				
+				var headerObjs = $('.headerObj');
+				for(i = 0; i < headerObjs.length; i++) {
+					if('category'+i == btnObj.attr('data-id')) {
+						btnObj.parent().addClass('active');
+					} else {
+						$(headerObjs[i]).parent().removeClass('active');
+					}
+				}
 			});
 		});
 	

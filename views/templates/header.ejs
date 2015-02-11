@@ -13,7 +13,9 @@
 			<ul class="nav navbar-nav">
 				<%
 					for(i = 0; i < headerObj.length; i++) {
-						%><li><a href="#" class="headerObj" data-id="category<%=i%>"><%= headerObj[i].name %></a></li><%
+						%><li>
+							<a href="#" class="headerObj" data-id="category<%=i%>"><%= headerObj[i].name %></a>
+						</li><%
 					}
 				%>				
 			</ul>
