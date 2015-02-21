@@ -1,7 +1,7 @@
 //server.js
 
 /**
-This is the server. Add important things to mentioned here.
+This is the server. Add important things to be mentioned here.
 **/
 var mqtt = require('mqtt');
 var path = require("path");
